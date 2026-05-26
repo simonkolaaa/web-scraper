@@ -30,10 +30,9 @@ services:
       - minio_data:/data
 
   backend:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.backend
-    image: getmaxun/maxun-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT:-8080}:${BACKEND_PORT:-8080}"
@@ -60,10 +59,9 @@ services:
       - /var/run/dbus:/var/run/dbus
 
   frontend:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.frontend 
-    image: getmaxun/maxun-frontend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-5173}:${FRONTEND_PORT:-5173}"

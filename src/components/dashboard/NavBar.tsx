@@ -31,7 +31,7 @@ import { AuthContext } from '../../context/auth';
 import { SaveRecording } from '../recorder/SaveRecording';
 import DiscordIcon from '../icons/DiscordIcon';
 import { apiUrl } from '../../apiConfig';
-import MaxunLogo from "../../assets/maxunlogo.png";
+import Logo from "../../assets/logo.png";
 import { useThemeMode } from '../../context/theme-provider';
 import packageJson from "../../../package.json"
 
@@ -56,21 +56,6 @@ export const NavBar: React.FC<NavBarProps> = ({
   const [langAnchorEl, setLangAnchorEl] = useState<null | HTMLElement>(null);
 
   const currentVersion = packageJson.version;
-
-  const [latestVersion, setLatestVersion] = useState<string | null>(null);
-  const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
-
-  const fetchLatestVersion = async (): Promise<string | null> => {
-    try {
-      const response = await fetch("https://api.github.com/repos/getmaxun/maxun/releases/latest");
-      const data = await response.json();
-      const version = data.tag_name.replace(/^v/, ""); // Remove 'v' prefix
-      return version;
-    } catch (error) {
-      console.error("Failed to fetch latest version:", error);
-      return null;
-    }
-  };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -151,62 +136,8 @@ export const NavBar: React.FC<NavBarProps> = ({
     </Tooltip>
   );
 
-  useEffect(() => {
-    const checkForUpdates = async () => {
-      const latestVersion = await fetchLatestVersion();
-      setLatestVersion(latestVersion);
-      if (latestVersion && latestVersion !== currentVersion) {
-        setIsUpdateAvailable(true);
-      }
-    };
-    checkForUpdates();
-  }, []);
-
   return (
     <>
-      {isUpdateAvailable && (
-        <Snackbar
-          open={isUpdateAvailable}
-          onClose={() => setIsUpdateAvailable(false)}
-          message={
-            `${t('navbar.upgrade.modal.new_version_available', { version: latestVersion })}`
-          }
-          action={
-            <>
-              <Button
-                color="primary"
-                size="small"
-                href="https://docs.maxun.dev/installation/upgrade"
-                style={{
-                  backgroundColor: '#ff00c3',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  marginRight: '8px',
-                  borderRadius: '5px',
-                }}
-              >
-                {t('navbar.upgrade.button')}
-              </Button>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={() => setIsUpdateAvailable(false)}
-                style={{ color: 'black' }}
-              >
-                <Close />
-              </IconButton>
-            </>
-          }
-          ContentProps={{
-            sx: {
-              background: "white",
-              color: "black",
-            }
-          }}
-        />
-      )}
       <NavBarWrapper mode={darkMode ? 'dark' : 'light'}>
         <div style={{
           display: 'flex',
@@ -214,7 +145,7 @@ export const NavBar: React.FC<NavBarProps> = ({
           cursor: 'pointer'
         }}
           onClick={() => navigate('/')}>
-          <img src={MaxunLogo} width={48} height={40} style={{ borderRadius: '5px', margin: '5px 0px 5px 15px' }} />
+          <img src={Logo} width={48} height={40} style={{ borderRadius: '5px', margin: '5px 0px 5px 15px' }} />
           <div style={{ padding: '11px' }}><ProjectName mode={darkMode ? 'dark' : 'light'}>{t('navbar.project_name')}</ProjectName></div>
           <Chip
             label={`${currentVersion}`}
@@ -228,19 +159,7 @@ export const NavBar: React.FC<NavBarProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
               {!isRecording ? (
                 <>
-                  <IconButton href="https://maxun.dev/autorobots" target="_blank" sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderRadius: '5px',
-                    padding: '8px',
-                    marginRight: '20px',
-                    '&:hover': {
-                      background: 'inherit',
-                      color: darkMode ? '#ffffff' : '#0000008A',
-                    }
-                  }}>
-                    <Typography variant="body1">Browse Auto Robots</Typography>
-                  </IconButton>
+                  
                   <IconButton onClick={handleMenuOpen} sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -275,26 +194,6 @@ export const NavBar: React.FC<NavBarProps> = ({
                       <Translate sx={{ marginRight: '5px' }} /> {t('navbar.menu_items.language')}
                     </MenuItem>
                     <hr />
-                    <MenuItem onClick={() => {
-                      window.open('https://github.com/getmaxun/maxun', '_blank');
-                    }}>
-                      <GitHub sx={{ marginRight: '5px' }} /> GitHub
-                    </MenuItem>
-                    <MenuItem onClick={() => {
-                      window.open('https://discord.gg/5GbPjBUkws', '_blank');
-                    }}>
-                      <DiscordIcon sx={{ marginRight: '5px' }} /> Discord
-                    </MenuItem>
-                    <MenuItem onClick={() => {
-                      window.open('https://www.youtube.com/@MaxunOSS/videos?ref=app', '_blank');
-                    }}>
-                      <YouTube sx={{ marginRight: '5px' }} /> YouTube
-                    </MenuItem>
-                    <MenuItem onClick={() => {
-                      window.open('https://x.com/MaxunHQ?ref=app', '_blank');
-                    }}>
-                      <X sx={{ marginRight: '5px' }} /> Twitter (X)
-                    </MenuItem>
                     <Menu
                       anchorEl={langAnchorEl}
                       open={Boolean(langAnchorEl)}
@@ -356,14 +255,7 @@ export const NavBar: React.FC<NavBarProps> = ({
                       >
                         Türkçe
                       </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          window.open('https://docs.maxun.dev/development/i18n', '_blank');
-                          handleMenuClose();
-                        }}
-                      >
-                        Add Language
-                      </MenuItem>
+
                     </Menu>
                   </Menu>
                   {renderThemeToggle()}
@@ -460,14 +352,7 @@ export const NavBar: React.FC<NavBarProps> = ({
                 >
                   Türkçe
                 </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    window.open('https://docs.maxun.dev/development/i18n', '_blank');
-                    handleMenuClose();
-                  }}
-                >
-                  Add Language
-                </MenuItem>
+
               </Menu>
               {renderThemeToggle()}
             </NavBarRight>

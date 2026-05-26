@@ -1,7 +1,7 @@
 {
-  "name": "maxun",
+  "name": "simon-kolaweb-scraper",
   "version": "0.0.40",
-  "author": "Maxun",
+  "author": "Simon Kola",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

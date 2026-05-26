@@ -10,13 +10,19 @@ const dbPath = path.join(__dirname, 'seen_jobs.json');
 
 // Carica configurazione
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-const bot = new TelegramBot(config.telegram_bot_token, { polling: false });
+
+// ATTENZIONE: polling: true per abilitare l'interattività
+const bot = new TelegramBot(config.telegram_bot_token, { polling: true });
 
 // Inizializza database ID visti
 if (!fs.existsSync(dbPath)) {
     fs.writeFileSync(dbPath, JSON.stringify([]));
 }
 let seenJobs = new Set(JSON.parse(fs.readFileSync(dbPath, 'utf8')));
+
+// Variabile di stato
+let isScraping = false;
+let totalScrapedToday = 0;
 
 // Funzione di utilità per filtrare parole chiave
 const containsKeyword = (text, keywords) => {
@@ -25,20 +31,18 @@ const containsKeyword = (text, keywords) => {
     return keywords.some(kw => lowerText.includes(kw.toLowerCase()));
 };
 
-// Funzione principale di scraping
+// Funzione principale di scraping per un singolo sito
 const scrapeSite = async (site, browser) => {
     try {
         const page = await browser.newPage();
         await page.goto(site.url, { waitUntil: 'networkidle', timeout: 30000 });
         
-        // Aspettiamo che il contenitore delle offerte venga caricato, o timeout morbido
         try {
             await page.waitForSelector(site.selectors.job_container, { timeout: 10000 });
         } catch (e) {
             console.log(`[Avviso] Selettore ${site.selectors.job_container} non trovato o attesa scaduta per ${site.name}`);
         }
         
-        // Aggiungiamo un ritardo extra per sicurezza per i rendering SPA
         await page.waitForTimeout(3000);
 
         const content = await page.content();
@@ -58,7 +62,7 @@ const scrapeSite = async (site, browser) => {
             }
 
             if (title && link) {
-                jobs.push({ title, link, description });
+                jobs.push({ title, link, description, siteName: site.name });
             }
         });
         return jobs;
@@ -69,46 +73,54 @@ const scrapeSite = async (site, browser) => {
 };
 
 // Esecuzione dello scraping su tutti i siti e controllo regole
-const runScraper = async () => {
-    console.log(`[${new Date().toLocaleString()}] Avvio scraping...`);
-    let newJobsFound = 0;
+const runScraper = async (chatIdForReply = null) => {
+    if (isScraping) {
+        if (chatIdForReply) bot.sendMessage(chatIdForReply, "⚠️ Scraping già in corso. Attendi...");
+        return;
+    }
     
+    isScraping = true;
+    console.log(`[${new Date().toLocaleString()}] Avvio scraping...`);
+    if (chatIdForReply) bot.sendMessage(chatIdForReply, "🔍 Avvio scraping su tutti i siti...");
+
+    let newJobsFound = 0;
     let browser;
+    
     try {
         browser = await chromium.launch({ headless: true });
         
-        for (const site of config.sites) {
-            console.log(`Controllo sito: ${site.name}`);
-            const jobs = await scrapeSite(site, browser);
-            console.log(`Trovate ${jobs.length} offerte in totale (prima dei filtri).`);
+        // Esecuzione CONCORRENTE: scansiona tutti i siti contemporaneamente
+        console.log(`Controllo simultaneo di ${config.sites.length} siti...`);
+        const allJobsArrays = await Promise.all(config.sites.map(site => scrapeSite(site, browser)));
+        
+        // Uniamo gli array di risultati
+        const allJobs = allJobsArrays.flat();
+        console.log(`Trovate ${allJobs.length} offerte totali da analizzare.`);
 
-            for (const job of jobs) {
-                const content = `${job.title} ${job.description}`.toLowerCase();
+        for (const job of allJobs) {
+            const content = `${job.title} ${job.description}`.toLowerCase();
+            
+            // Applica i filtri
+            const hasInclude = config.keywords.include.length === 0 || containsKeyword(content, config.keywords.include);
+            const hasExclude = containsKeyword(content, config.keywords.exclude);
+            const hasLocation = !config.keywords.locations || config.keywords.locations.length === 0 || containsKeyword(content, config.keywords.locations);
+
+            // Se rispetta i criteri e non è già stato notificato
+            if (hasInclude && !hasExclude && hasLocation && !seenJobs.has(job.link)) {
+                const message = `🚨 <b>Nuova Offerta di Lavoro!</b>\n\n` +
+                                `🏢 <b>Sito:</b> ${job.siteName}\n` +
+                                `💼 <b>Titolo:</b> ${job.title}\n` +
+                                `🔗 <b>Link:</b> <a href="${job.link}">Vai all'offerta</a>`;
                 
-                // Applica i filtri
-                const hasInclude = config.keywords.include.length === 0 || containsKeyword(content, config.keywords.include);
-                const hasExclude = containsKeyword(content, config.keywords.exclude);
-                const hasLocation = !config.keywords.locations || config.keywords.locations.length === 0 || containsKeyword(content, config.keywords.locations);
-
-                // Se rispetta i criteri e non è già stato notificato
-                if (hasInclude && !hasExclude && hasLocation && !seenJobs.has(job.link)) {
-                    const message = `🚨 <b>Nuova Offerta di Lavoro!</b>\n\n` +
-                                    `🏢 <b>Sito:</b> ${site.name}\n` +
-                                    `💼 <b>Titolo:</b> ${job.title}\n` +
-                                    `🔗 <b>Link:</b> <a href="${job.link}">Vai all'offerta</a>`;
-                    
-                    try {
-                        if (config.telegram_bot_token !== "INSERISCI_QUI_IL_TOKEN_DEL_BOT" && config.telegram_chat_id !== "INSERISCI_QUI_IL_TUO_CHAT_ID") {
-                            await bot.sendMessage(config.telegram_chat_id, message, { parse_mode: 'HTML' });
-                            console.log(`Notifica inviata per: ${job.title}`);
-                        } else {
-                            console.log(`[TEST MODE] Invierei notifica per: ${job.title}`);
-                        }
-                        seenJobs.add(job.link);
-                        newJobsFound++;
-                    } catch (e) {
-                        console.error(`Errore invio Telegram per "${job.title}":`, e.message);
+                try {
+                    if (config.telegram_bot_token !== "INSERISCI_QUI_IL_TOKEN_DEL_BOT" && config.telegram_chat_id !== "INSERISCI_QUI_IL_TUO_CHAT_ID") {
+                        await bot.sendMessage(config.telegram_chat_id, message, { parse_mode: 'HTML' });
                     }
+                    seenJobs.add(job.link);
+                    newJobsFound++;
+                    totalScrapedToday++;
+                } catch (e) {
+                    console.error(`Errore invio Telegram per "${job.title}":`, e.message);
                 }
             }
         }
@@ -118,17 +130,51 @@ const runScraper = async () => {
         if (browser) {
             await browser.close();
         }
+        isScraping = false;
     }
 
     // Salva i nuovi link per non rimandarli
     fs.writeFileSync(dbPath, JSON.stringify(Array.from(seenJobs), null, 2));
-    console.log(`[${new Date().toLocaleString()}] Scraping completato. ${newJobsFound} nuove offerte trovate e salvate.`);
+    const msg = newJobsFound > 0
+        ? `✅ Scansione completata: ${newJobsFound} nuove offerte inviate!`
+        : `ℹ️ Scansione completata: nessuna nuova offerta trovata questa volta.`;
+    console.log(`[${new Date().toLocaleString()}] ${msg}`);
+    
+    if (chatIdForReply) {
+        bot.sendMessage(chatIdForReply, msg);
+    }
 };
 
-// Avvio programmato
-console.log(`Scraper inizializzato.`);
-console.log(`Schedulazione (Cron): ${config.cron_schedule}`);
-cron.schedule(config.cron_schedule, runScraper);
+// ==========================================
+// TELEGRAM BOT COMMANDS
+// ==========================================
 
-// Esegui subito al lancio
+bot.onText(/\/start/, (msg) => {
+    bot.sendMessage(msg.chat.id, "👋 Ciao! Sono il tuo Bot per lo scraping di offerte di lavoro.\n\nUsa /scrape per avviare una scansione manuale.\nUsa /status per vedere le statistiche di oggi.");
+});
+
+bot.onText(/\/scrape/, (msg) => {
+    // Rispondi e avvia lo scraping forzato
+    runScraper(msg.chat.id);
+});
+
+bot.onText(/\/status/, (msg) => {
+    const stats = `📊 <b>Status Bot</b>\n\n` +
+                  `Siti configurati: ${config.sites.length}\n` +
+                  `Offerte uniche inviate in totale: ${seenJobs.size}\n` +
+                  `Nuove offerte trovate nell'ultima sessione: ${totalScrapedToday}\n` +
+                  `Scraping in corso: ${isScraping ? "Sì ⏳" : "No ❌"}`;
+    bot.sendMessage(msg.chat.id, stats, { parse_mode: 'HTML' });
+});
+
+bot.on('polling_error', (error) => {
+    console.log("[Telegram API Error]", error.message);
+});
+
+// Avvio programmato (Cron)
+console.log(`Scraper inizializzato con polling interattivo.`);
+console.log(`Schedulazione (Cron): ${config.cron_schedule}`);
+cron.schedule(config.cron_schedule, () => runScraper());
+
+// Esegui subito al primo avvio
 runScraper();
