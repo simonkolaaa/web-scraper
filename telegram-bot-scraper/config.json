@@ -1,0 +1,42 @@
+{
+  "telegram_bot_token": "8963226626:AAF5ytZCXO7EP4BJJJG78hsIHcnUXxsFp64",
+  "telegram_chat_id": "810068880",
+  "cron_schedule": "0 9 * * *",
+  "keywords": {
+    "include": ["sviluppatore", "developer", "programmatore", "IT", "Ingegnere Informatico", "Patente B", "Automunito", "Autista", "Fattorino", "Addetto Vendita", "Guida"],
+    "exclude": ["stage", "tirocinio", "senior", "junior", "apprendista"],
+    "locations": ["rimini", "riccione", "morciano", "misano", "cattolica", "coriano", "san giovanni in marignano", "san clemente"]
+  },
+  "sites": [
+    {
+      "name": "Lavoro Per Te Emilia-Romagna",
+      "url": "https://lavoroperte.regione.emilia-romagna.it/offerte-lavoro/vacancy/cerca",
+      "selectors": {
+        "job_container": ".card-lavoro, .job-item",
+        "title": ".card-title, .job-title",
+        "link": "a.btn-dettaglio, a.job-link",
+        "description": ".card-text, .job-description"
+      }
+    },
+    {
+      "name": "Subito.it Lavoro (Emilia Romagna)",
+      "url": "https://www.subito.it/annunci-emilia-romagna/vendita/offerte-lavoro/",
+      "selectors": {
+        "job_container": ".items__item",
+        "title": "h2",
+        "link": "a",
+        "description": ".item-description, p"
+      }
+    },
+    {
+      "name": "Indeed IT",
+      "url": "https://it.indeed.com/jobs?q=Sviluppatore&l=Emilia-Romagna",
+      "selectors": {
+        "job_container": ".job_seen_beacon",
+        "title": "h2.jobTitle",
+        "link": "h2.jobTitle a",
+        "description": ".job-snippet"
+      }
+    }
+  ]
+}
