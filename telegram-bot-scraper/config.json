@@ -1,6 +1,4 @@
 {
-  "telegram_bot_token": "8963226626:AAF5ytZCXO7EP4BJJJG78hsIHcnUXxsFp64",
-  "telegram_chat_id": "810068880",
   "cron_schedule": "0 * * * *",
   "keywords": {
     "include": ["sviluppatore", "developer", "programmatore", "IT", "Ingegnere Informatico", "Patente B", "Automunito", "Autista", "Fattorino", "Addetto Vendita", "Guida"],

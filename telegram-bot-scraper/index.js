@@ -4,15 +4,18 @@ const TelegramBot = require('node-telegram-bot-api');
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const configPath = path.join(__dirname, 'config.json');
 const dbPath = path.join(__dirname, 'seen_jobs.json');
 
+// Credenziali da .env (MAI nel config.json!)
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
 // Carica configurazione
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-
-// ATTENZIONE: polling: true per abilitare l'interattività
-const bot = new TelegramBot(config.telegram_bot_token, { polling: true });
+const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 
 // Inizializza database ID visti
 if (!fs.existsSync(dbPath)) {
@@ -113,9 +116,7 @@ const runScraper = async (chatIdForReply = null) => {
                                 `🔗 <b>Link:</b> <a href="${job.link}">Vai all'offerta</a>`;
                 
                 try {
-                    if (config.telegram_bot_token !== "INSERISCI_QUI_IL_TOKEN_DEL_BOT" && config.telegram_chat_id !== "INSERISCI_QUI_IL_TUO_CHAT_ID") {
-                        await bot.sendMessage(config.telegram_chat_id, message, { parse_mode: 'HTML' });
-                    }
+                    await bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'HTML' });
                     seenJobs.add(job.link);
                     newJobsFound++;
                     totalScrapedToday++;
