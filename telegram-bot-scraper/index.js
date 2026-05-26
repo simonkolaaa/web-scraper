@@ -41,9 +41,9 @@ const scrapeSite = async (site, browser) => {
         await page.goto(site.url, { waitUntil: 'networkidle', timeout: 30000 });
         
         try {
-            await page.waitForSelector(site.selectors.job_container, { timeout: 10000 });
+            await page.waitForSelector(site.selectors.container, { timeout: 10000 });
         } catch (e) {
-            console.log(`[Avviso] Selettore ${site.selectors.job_container} non trovato o attesa scaduta per ${site.name}`);
+            console.log(`[Avviso] Selettore ${site.selectors.container} non trovato o attesa scaduta per ${site.name}`);
         }
         
         await page.waitForTimeout(3000);
@@ -54,7 +54,7 @@ const scrapeSite = async (site, browser) => {
         const $ = cheerio.load(content);
         const jobs = [];
 
-        $(site.selectors.job_container).each((i, el) => {
+        $(site.selectors.container).each((i, el) => {
             const title = $(el).find(site.selectors.title).text().replace(/\s+/g, ' ').trim();
             const description = $(el).find(site.selectors.description).text().replace(/\s+/g, ' ').trim();
             
@@ -65,7 +65,7 @@ const scrapeSite = async (site, browser) => {
             }
 
             if (title && link) {
-                jobs.push({ title, link, description, siteName: site.name });
+                jobs.push({ title, link, description, siteName: site.name, filters: site.filters });
             }
         });
         return jobs;
@@ -103,10 +103,15 @@ const runScraper = async (chatIdForReply = null) => {
         for (const job of allJobs) {
             const content = `${job.title} ${job.description}`.toLowerCase();
             
-            // Applica i filtri
-            const hasInclude = config.keywords.include.length === 0 || containsKeyword(content, config.keywords.include);
-            const hasExclude = containsKeyword(content, config.keywords.exclude);
-            const hasLocation = !config.keywords.locations || config.keywords.locations.length === 0 || containsKeyword(content, config.keywords.locations);
+            // Applica i filtri dal sito specifico (fallback vuoto se non definiti)
+            const filters = job.filters || { include: [], exclude: [], locations: [] };
+            const inc = filters.include || [];
+            const exc = filters.exclude || [];
+            const loc = filters.locations || [];
+            
+            const hasInclude = inc.length === 0 || containsKeyword(content, inc);
+            const hasExclude = exc.length > 0 && containsKeyword(content, exc);
+            const hasLocation = loc.length === 0 || containsKeyword(content, loc);
 
             // Se rispetta i criteri e non è già stato notificato
             if (hasInclude && !hasExclude && hasLocation && !seenJobs.has(job.link)) {

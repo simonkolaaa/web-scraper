@@ -1,19 +1,19 @@
 {
   "cron_schedule": "0 * * * *",
-  "keywords": {
-    "include": ["sviluppatore", "developer", "programmatore", "IT", "Ingegnere Informatico", "Patente B", "Automunito", "Autista", "Fattorino", "Addetto Vendita", "Guida"],
-    "exclude": ["stage", "tirocinio", "senior", "junior", "apprendista"],
-    "locations": ["rimini", "riccione", "morciano", "misano", "cattolica", "coriano", "san giovanni in marignano", "san clemente"]
-  },
   "sites": [
     {
       "name": "Lavoro Per Te Emilia-Romagna",
       "url": "https://lavoroperte.regione.emilia-romagna.it/offerte-lavoro/vacancy/cerca",
       "selectors": {
-        "job_container": ".card-lavoro, .job-item",
+        "container": ".card-lavoro, .job-item",
         "title": ".card-title, .job-title",
         "link": "a.btn-dettaglio, a.job-link",
         "description": ".card-text, .job-description"
+      },
+      "filters": {
+        "include": ["sviluppatore", "developer", "programmatore", "IT", "Ingegnere Informatico", "Patente B", "Automunito", "Autista", "Fattorino", "Addetto Vendita", "Guida"],
+        "exclude": ["stage", "tirocinio", "senior", "junior", "apprendista"],
+        "locations": ["rimini", "riccione", "morciano", "misano", "cattolica", "coriano", "san giovanni in marignano", "san clemente"]
       }
     }
   ]
