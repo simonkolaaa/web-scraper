@@ -103,11 +103,14 @@ const lightTheme = createTheme({
 });
 
 const darkTheme = createTheme({
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  },
   palette: {
     mode: 'dark',
     primary: {
-      main: "#ff00c3",
-      contrastText: "#ffffff",
+      main: "#00e5ff", // Neon Cyan
+      contrastText: "#000000",
     },
     error: {
       main: '#f44336',
@@ -116,8 +119,8 @@ const darkTheme = createTheme({
       contrastText: '#ffffff',
     },
     background: {
-      default: '#000000ff',
-      paper: '#000000ff',
+      default: '#0b0b0e',
+      paper: '#121217',
     },
     text: {
       primary: '#ffffff',
@@ -152,13 +155,15 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
+          borderRadius: "8px",
+          fontWeight: 600,
           color: '#ffffff',
           '&.MuiButton-outlined': {
-            borderColor: '#ffffff',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
             color: '#ffffff',
             "&:hover": {
-              borderColor: '#ffffff',
-              backgroundColor: 'inherit',
+              borderColor: '#00e5ff',
+              backgroundColor: 'rgba(0, 229, 255, 0.08)',
             },
           },
         },
@@ -245,22 +250,30 @@ const darkTheme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: '#000000ff',
-          border: '1px solid #080808ff',
+          backgroundColor: 'rgba(18, 18, 23, 0.7)',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255, 255, 255, 0.05)',
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#080808ff',
+          backgroundColor: 'rgba(11, 11, 14, 0.8)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          boxShadow: 'none',
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#080808ff',
+          backgroundColor: 'rgba(18, 18, 23, 0.85)',
+          backdropFilter: 'blur(16px)',
+          borderRight: '1px solid rgba(255, 255, 255, 0.05)',
         },
       },
     },
@@ -297,10 +310,10 @@ const ThemeModeContext = createContext({
 export const useThemeMode = () => useContext(ThemeModeContext);
 
 const ThemeModeProvider = ({ children }: { children: React.ReactNode }) => {
-  // Load saved mode from localStorage or default to light mode
+  // Load saved mode from localStorage or default to dark mode for Nexus
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem('darkMode');
-    return savedMode ? JSON.parse(savedMode) : false;
+    return savedMode ? JSON.parse(savedMode) : true;
   });
 
   const toggleTheme = () => {

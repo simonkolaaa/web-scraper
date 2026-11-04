@@ -1,0 +1,14 @@
+services:
+  job-scraper-bot:
+    build: .
+    container_name: job-scraper-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - TZ=Europe/Rome
+    volumes:
+      - ./data:/usr/src/app/data
+      - ./config.json:/usr/src/app/config.json
+      - ./index.js:/usr/src/app/index.js
+    shm_size: '1gb'

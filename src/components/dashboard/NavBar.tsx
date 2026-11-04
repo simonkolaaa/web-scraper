@@ -146,7 +146,7 @@ export const NavBar: React.FC<NavBarProps> = ({
         }}
           onClick={() => navigate('/')}>
           <img src={Logo} width={48} height={40} style={{ borderRadius: '5px', margin: '5px 0px 5px 15px' }} />
-          <div style={{ padding: '11px' }}><ProjectName mode={darkMode ? 'dark' : 'light'}>{t('navbar.project_name')}</ProjectName></div>
+          <div style={{ padding: '11px' }}><ProjectName mode={darkMode ? 'dark' : 'light'}>NEXUS</ProjectName></div>
           <Chip
             label={`${currentVersion}`}
             color="primary"
@@ -233,14 +233,6 @@ export const NavBar: React.FC<NavBarProps> = ({
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          changeLanguage("zh");
-                          handleMenuClose();
-                        }}
-                      >
-                        中文
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
                           changeLanguage("de");
                           handleMenuClose();
                         }}
@@ -249,11 +241,11 @@ export const NavBar: React.FC<NavBarProps> = ({
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          changeLanguage("tr");
+                          changeLanguage("it");
                           handleMenuClose();
                         }}
                       >
-                        Türkçe
+                        Italiano
                       </MenuItem>
 
                     </Menu>
@@ -330,14 +322,6 @@ export const NavBar: React.FC<NavBarProps> = ({
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    changeLanguage("zh");
-                    handleMenuClose();
-                  }}
-                >
-                  中文
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
                     changeLanguage("de");
                     handleMenuClose();
                   }}
@@ -346,11 +330,11 @@ export const NavBar: React.FC<NavBarProps> = ({
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    changeLanguage("tr");
+                    changeLanguage("it");
                     handleMenuClose();
                   }}
                 >
-                  Türkçe
+                  Italiano
                 </MenuItem>
 
               </Menu>
@@ -364,16 +348,20 @@ export const NavBar: React.FC<NavBarProps> = ({
 
 const NavBarWrapper = styled.div<{ mode: 'light' | 'dark' }>`
   grid-area: navbar;
-  background-color: ${({ mode }) => (mode === 'dark' ? '#000000ff' : '#ffffff')};
+  background-color: ${({ mode }) => (mode === 'dark' ? 'rgba(11, 11, 14, 0.8)' : '#ffffff')};
+  backdrop-filter: ${({ mode }) => (mode === 'dark' ? 'blur(10px)' : 'none')};
   padding: 5px;
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid ${({ mode }) => (mode === 'dark' ? '#000000ff' : '#e0e0e0')};
+  border-bottom: 1px solid ${({ mode }) => (mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#e0e0e0')};
+  z-index: 1000;
 `;
 
 const ProjectName = styled.b<{ mode: 'light' | 'dark' }>`
-  color: ${({ mode }) => (mode === 'dark' ? '#ffffff' : '#3f4853')};
-  font-size: 1.3em;
+  color: ${({ mode }) => (mode === 'dark' ? '#00e5ff' : '#3f4853')};
+  font-size: 1.5em;
+  letter-spacing: 2px;
+  font-weight: 800;
 `;
 
 const NavBarRight = styled.div`

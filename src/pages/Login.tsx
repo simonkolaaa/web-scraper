@@ -87,21 +87,20 @@ const Login = () => {
         onSubmit={submitForm}
         sx={{
           textAlign: "center",
-          backgroundColor: darkMode ? "#121111ff" : "#ffffff",
-          color: darkMode ? "#ffffff" : "#333333",
+          color: "#ffffff",
           padding: 6,
-          borderRadius: 5,
-          boxShadow: "0px 20px 40px rgba(0, 0, 0, 0.2), 0px -5px 10px rgba(0, 0, 0, 0.15)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           maxWidth: 500,
           width: "100%",
         }}
+        className="glass-panel"
       >
-        <img src="../src/assets/maxunlogo.png" alt="logo" height={60}
-          width={70} style={{ marginBottom: 20, borderRadius: "20%", alignItems: "center" }} />
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h3" sx={{ fontWeight: 800, color: '#00e5ff', mb: 1, letterSpacing: '4px' }}>
+          NEXUS
+        </Typography>
+        <Typography variant="h4" sx={{ fontWeight: 300, mb: 3 }} gutterBottom>
           {t('login.title')}
         </Typography>
         <TextField
@@ -147,7 +146,7 @@ const Login = () => {
         </Button>
         <Typography variant="body2" align="center">
           {t('login.register_prompt')}{" "}
-          <Link to="/register" style={{ textDecoration: "none", color: "#ff33cc" }}>
+          <Link to="/register" style={{ textDecoration: "none", color: "#00e5ff", fontWeight: "bold" }}>
             {t('login.register_link')}
           </Link>
         </Typography>

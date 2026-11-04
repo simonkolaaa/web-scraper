@@ -1,0 +1,71 @@
+{
+    "mainmenu":{
+      "recordings": "I Miei Robot",
+      "runs": "Esecuzioni",
+      "proxy": "Proxy",
+      "apikey": "Chiavi API",
+      "feedback":"Unisciti a Nexus Cloud",
+      "apidocs":"Sito web a API"
+    },
+    "navbar": {
+      "project_name": "Nexus",
+      "menu_items": {
+        "logout": "Esci",
+        "language": "Lingua"
+      },
+      "recording": {
+        "discard": "Annulla Registrazione"
+      }
+    },
+    "recordingtable":{
+      "run": "Avvia",
+      "name": "Nome",
+      "schedule": "Pianifica",
+      "integrate": "Integra",
+      "settings": "Impostazioni",
+      "options": "Opzioni",
+      "heading":"I Miei Robot",
+      "new":"Crea Nuovo Robot",
+      "search":"Cerca Robot...",
+      "retrain": "Riadatta",
+      "edit":"Modifica",
+      "delete":"Elimina",
+      "duplicate":"Duplica",
+      "placeholder": {
+        "title": "Tutto pronto per iniziare!",
+        "body": "I robot che crei appariranno qui. Clicca su \"Crea Nuovo Robot\" per iniziare a estrarre dati!"
+      }
+    },
+    "runstable":{
+      "runs":"Tutte le Esecuzioni",
+      "runStatus":"Stato",
+      "runName":"Nome",
+      "name":"Nome",
+      "startedAt":"Iniziato il",
+      "finishedAt":"Finito il",
+      "delete":"Elimina",
+      "settings":"Impostazioni",
+      "search":"Cerca Esecuzioni..."
+    },
+    "save_recording": {
+      "title": "Salva Robot",
+      "robot_name": "Nome Robot",
+      "buttons": {
+        "save": "Salva",
+        "confirm": "Conferma"
+      }
+    },
+    "right_panel": {
+      "buttons": {
+        "capture_list": "Cattura Lista",
+        "capture_text": "Cattura Testo",
+        "capture_screenshot": "Cattura Screenshot",
+        "confirm": "Conferma",
+        "discard": "Annulla",
+        "finish_capture": "Termina Cattura",
+        "reset": "Riavvia Registrazione",
+        "finish": "Finito",
+        "cancel": "Annulla"
+      }
+    }
+}

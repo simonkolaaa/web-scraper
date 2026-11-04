@@ -1,20 +1,173 @@
 {
-  "cron_schedule": "0 * * * *",
+  "machine_name": "Docker-Rimini-JobBot",
+  "cron_schedule": "*/30 * * * *",
+  "polling_minutes": 30,
+  "active": true,
+  "categories": {
+    "Informatica & Sviluppo": {
+      "icon": "💻",
+      "keywords": [
+        "sviluppatore",
+        "developer",
+        "programmatore",
+        "software",
+        "web developer",
+        "frontend",
+        "front-end",
+        "backend",
+        "back-end",
+        "fullstack",
+        "full-stack",
+        "full stack",
+        "sistemista",
+        "help desk",
+        "helpdesk",
+        "informatico",
+        "tecnico informatico",
+        "ingegnere informatico",
+        "it",
+        "ict",
+        "devops",
+        "data analyst",
+        "erp"
+      ]
+    },
+    "Guida & Consegne": {
+      "icon": "🚚",
+      "keywords": [
+        "autista",
+        "fattorino",
+        "corriere",
+        "consegne",
+        "patente b",
+        "automunito",
+        "driver",
+        "trasportatore",
+        "addetto consegne",
+        "recapito",
+        "guida"
+      ]
+    },
+    "Vendita & Magazzino": {
+      "icon": "🏪",
+      "keywords": [
+        "addetto vendita",
+        "addetta vendita",
+        "addetto alle vendite",
+        "addetta alle vendite",
+        "commesso",
+        "commessa",
+        "cassiere",
+        "cassiera",
+        "magazziniere",
+        "magazzino",
+        "logistica",
+        "scaffalista",
+        "banconista",
+        "facchino",
+        "picking",
+        "addetto reparto"
+      ]
+    },
+    "Impiegato & Ufficio": {
+      "icon": "🗂️",
+      "keywords": [
+        "impiegato",
+        "impiegata",
+        "back office",
+        "back-office",
+        "front office",
+        "front-office",
+        "segreteria",
+        "segretario",
+        "segretaria",
+        "amministrativo",
+        "amministrativa",
+        "data entry",
+        "receptionist",
+        "customer care",
+        "centralinista",
+        "addetto ufficio",
+        "contabile"
+      ]
+    },
+    "Personalizzate": {
+      "icon": "⭐",
+      "keywords": []
+    }
+  },
+  "blacklist": [
+    "stage",
+    "tirocinio",
+    "senior",
+    "apprendista",
+    "partita iva",
+    "p.iva",
+    "porta a porta",
+    "procacciatore",
+    "network marketing",
+    "agente immobiliare",
+    "consulente immobiliare",
+    "agente di commercio",
+    "santarcangelo",
+    "bellaria",
+    "igea marina",
+    "poggio torriana",
+    "verucchio",
+    "villa verucchio",
+    "novafeltria",
+    "san leo",
+    "pennabilli",
+    "viserba",
+    "viserbella",
+    "torre pedrera",
+    "rivabella",
+    "san giuliano",
+    "miramare",
+    "rivazzurra",
+    "marebello",
+    "bellariva"
+  ],
+  "locations": [
+    "morciano",
+    "morciano di romagna",
+    "san clemente",
+    "sant'andrea in casale",
+    "sant andrea in casale",
+    "cattolica",
+    "san giovanni in marignano",
+    "san giovanni",
+    "riccione",
+    "misano",
+    "misano adriatico",
+    "coriano",
+    "rimini"
+  ],
   "sites": [
     {
+      "id": "linkedin",
+      "name": "LinkedIn Jobs (Rimini Sud / Valconca)",
+      "enabled": true
+    },
+    {
+      "id": "subito",
+      "name": "Subito.it Lavoro (Rimini Sud / Valconca)",
+      "enabled": true
+    },
+    {
+      "id": "agenzie",
+      "name": "Agenzie Lavoro (Randstad Rimini / Riccione / Cattolica)",
+      "enabled": true
+    },
+    {
+      "id": "lavoroperte",
       "name": "Lavoro Per Te Emilia-Romagna",
-      "url": "https://lavoroperte.regione.emilia-romagna.it/offerte-lavoro/vacancy/cerca",
-      "selectors": {
-        "container": ".card-lavoro, .job-item",
-        "title": ".card-title, .job-title",
-        "link": "a.btn-dettaglio, a.job-link",
-        "description": ".card-text, .job-description"
-      },
-      "filters": {
-        "include": ["sviluppatore", "developer", "programmatore", "IT", "Ingegnere Informatico", "Patente B", "Automunito", "Autista", "Fattorino", "Addetto Vendita", "Guida"],
-        "exclude": ["stage", "tirocinio", "senior", "junior", "apprendista"],
-        "locations": ["rimini", "riccione", "morciano", "misano", "cattolica", "coriano", "san giovanni in marignano", "san clemente"]
-      }
+      "enabled": true
+    },
+    {
+      "id": "portali",
+      "name": "Portali Annunci (Bakeca / Careerjet)",
+      "enabled": true
     }
   ]
 }

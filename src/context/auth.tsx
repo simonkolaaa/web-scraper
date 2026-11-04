@@ -18,7 +18,7 @@ type InitialStateType = {
 };
 
 const initialState = {
-    user: null,
+    user: { email: "admin@nexus.local", id: 1 },
     lastActivityTime: Date.now(),
 };
 
@@ -139,17 +139,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         function (error) {
             const res = error.response;
             if (res?.status === 401 && res.config && !res.config.__isRetryRequest) {
-                return new Promise((_, reject) => {
-                    handleLogout()
-                        .then(() => {
-                            console.log('/401 error > logout');
-                            reject(error);
-                        })
-                        .catch((err) => {
-                            console.error('AXIOS INTERCEPTORS ERROR:', err);
-                            reject(error);
-                        });
-                });
+                // Ignore 401 redirects to bypass login
+                return Promise.reject(error);
             }
             return Promise.reject(error);
         }

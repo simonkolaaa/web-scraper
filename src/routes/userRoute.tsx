@@ -50,7 +50,7 @@ const UserRoute = () => {
         }
     }
     
-    return state.user ? <Outlet /> : <Navigate to="/login" />;
+    return <Outlet />;
 };
 
 export default UserRoute;
