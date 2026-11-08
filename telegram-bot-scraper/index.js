@@ -139,6 +139,7 @@ const scrapeLinkedIn = async () => {
     const seenUrls = new Set();
     const queries = [
         "", // Tutte le offerte recenti a Rimini
+        "concessionaria OR venditore auto OR automotive OR autosalone",
         "sviluppatore OR programmatore OR IT OR software",
         "autista OR fattorino OR corriere OR magazziniere",
         "impiegato OR back office OR segreteria OR addetto vendita"
@@ -562,6 +563,9 @@ const buildCommandsMessage = () => {
         (acc, cat) => acc + (cat.keywords ? cat.keywords.length : 0),
         0
     );
+    const activeCategoriesCount = Object.values(cfg.categories || {}).filter(
+        cat => (cat.keywords || []).length > 0
+    ).length;
     const sitesList = (cfg.sites || [])
         .filter(s => s.enabled)
         .map(s => `• ${escapeHtml(s.name)}`)
@@ -585,7 +589,7 @@ const buildCommandsMessage = () => {
         `<b>⏰ Scheduler &amp; Filtri:</b>\n` +
         `• Controllo automatico ogni ${cfg.polling_minutes || 30} minuti\n` +
         `• Area: Provincia di Rimini (${(cfg.locations || []).length} comuni)\n` +
-        `• Keyword attive: ${totalKeywords} (in 4 categorie) | Blacklist: ${(cfg.blacklist || []).length}\n\n` +
+        `• Keyword attive: ${totalKeywords} (in ${activeCategoriesCount} categorie) | Blacklist: ${(cfg.blacklist || []).length}\n\n` +
         `<b>🌐 Portali monitorati:</b>\n${sitesList}\n\n` +
         `🖥️ <i>${escapeHtml(cfg.machine_name || 'Docker-Rimini-JobBot')}</i>`
     );
